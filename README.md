@@ -32,11 +32,17 @@ func main() {
 			"./test.err",
 			c.NewLocation(1, 5, 10),
 			"Invalid function name.",
+		)).
+		WithDiagnostic(c.NewDiagnosticWithSource(
+			"./test.err",
+			"fmt.Println(\"Hello, World!\")",
+			c.NewLocation(1, 5, 12),
+			"Invalid function name.",
 		))
-	fmt.Printf("%s", error.ToString(c.DefaultStyle()))
+	fmt.Printf("%s", error.Error(c.DefaultStyle()))
 }
 ```
-<img width="602" height="272" alt="image" src="https://github.com/user-attachments/assets/d2ffc8e9-b57e-45a4-8c5d-397b545cee35" />
+<img alt="image" src="assets/simple.png" />
 
 # Customizing style
 You can easily make your own style for errors, using Style struct:

@@ -11,27 +11,36 @@ import (
  * Reads source by path and location,
  * returns filename and line to render
  */
-func ReadSource(path string, location Location, style *Style) (string, string) {
+func ReadSourceDiagnostic(diagnostic Diagnostic, style *Style) (string, string) {
+	if diagnostic.Source != nil {
+		return filepath.Base(diagnostic.SourcePath), *diagnostic.Source
+	}
+
 	// Openning source code file
-	file, err := os.Open(path)
+	file, err := os.Open(diagnostic.SourcePath)
 	if err != nil {
-		fmt.Println(NewError(fmt.Sprintf("Could not read source code file: %s", path)).ToString(style))
+		fmt.Println(NewError(fmt.Sprintf("Could not read source code file: %s", diagnostic.SourcePath)).Error(style))
 		os.Exit(1)
 	}
 	defer file.Close()
 
 	// Reading file name
-	fileName := filepath.Base(path)
+	fileName := filepath.Base(diagnostic.SourcePath)
 
 	// Reading source code
 	scanner := bufio.NewScanner(file)
 	n := 0
 	for scanner.Scan() {
-		if n < location.Line {
+		if n < diagnostic.Location.Line {
 			n++
 		} else {
 			return fileName, scanner.Text()
 		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println(NewError(fmt.Sprintf("Error reading source code file: %s", diagnostic.SourcePath)).Error(style))
+		os.Exit(1)
 	}
 
 	return fileName, scanner.Text()

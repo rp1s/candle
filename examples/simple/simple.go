@@ -16,6 +16,12 @@ func main() {
 			"./test.err",
 			c.NewLocation(1, 5, 10),
 			"Invalid function name.",
+		)).
+		WithDiagnostic(c.NewDiagnosticWithSource(
+			"./test.err",
+			"fmt.Println(\"Hello, World!\")",
+			c.NewLocation(1, 5, 12),
+			"Invalid function name.",
 		))
-	fmt.Printf("%s", error.ToString(c.DefaultStyle()))
+	fmt.Printf("%s", error.Error(c.DefaultStyle()))
 }
