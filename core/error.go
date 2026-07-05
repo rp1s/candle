@@ -30,6 +30,7 @@ func (self *Error) WithDiagnostic(diagnostic Diagnostic) *Error {
 }
 
 // Diagnostic to string
-func (self *Error) ToString(style *Style) string {
+// implementation of the error interface
+func (self *Error) Error(style *Style) string {
 	return Report(self, style)
 }

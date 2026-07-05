@@ -8,36 +8,61 @@ import (
 /*
  * Reports diagnostics, if they given
  */
-func ReportDiagnostics(builder *strings.Builder, error *Error, style *Style) {
-	if len(error.Diagnostics) > 0 {
-		for _, diagnostic := range error.Diagnostics {
-			file, line := ReadSource(diagnostic.Source, diagnostic.Location, style)
-
-			fmt.Fprintln(builder, "")
-			fmt.Fprintf(builder, "%s%s%s%s\n", style.FileNameColor, file, style.FileNameColonColor, style.FileNameColon)
-			fmt.Fprintf(builder, "%s%d %s%s\n", style.LineNumberColor, diagnostic.Location.Line, style.LineColor, line)
-
-			spacesAmount := diagnostic.Location.Start + len(fmt.Sprintf("%d", diagnostic.Location.Line))
-			arrowsAmount := diagnostic.Location.End - diagnostic.Location.Start
-
-			spaces := strings.Repeat(style.SpaceChar, spacesAmount)
-			arrows := strings.Repeat(style.ArrowChar, arrowsAmount)
-
-			fmt.Fprintf(builder, "%s%s%s\n", spaces, style.ArrowCharColor, arrows)
-			fmt.Fprintf(builder, "%s%s%s%s\n", spaces, style.CaptionColor, diagnostic.Label, ResetColor)
-		}
-		fmt.Fprintf(builder, "\n")
+func ReportDiagnostics(sb *strings.Builder, err *Error, style *Style) *strings.Builder {
+	if len(err.Diagnostics) == 0 {
+		return sb
 	}
+
+	for _, diagnostic := range err.Diagnostics {
+		file, line := ReadSource(diagnostic.Source, diagnostic.Location, style)
+
+		sb.WriteString("\n")
+
+		sb.WriteString(style.FileNameColor)
+		sb.WriteString(file)
+		sb.WriteString(style.FileNameColonColor)
+		sb.WriteString(style.FileNameColon)
+		sb.WriteString("\n")
+
+		sb.WriteString(style.LineNumberColor)
+		sb.WriteString(fmt.Sprint(diagnostic.Location.Line))
+		sb.WriteString(" ")
+		sb.WriteString(style.LineColor)
+		sb.WriteString(line)
+		sb.WriteString("\n")
+
+		lineNumLen := len(fmt.Sprint(diagnostic.Location.Line))
+		spacesAmount := diagnostic.Location.Start + lineNumLen
+		arrowsAmount := diagnostic.Location.End - diagnostic.Location.Start
+
+		sb.WriteString(strings.Repeat(style.SpaceChar, spacesAmount))
+		sb.WriteString(style.ArrowCharColor)
+		sb.WriteString(strings.Repeat(style.ArrowChar, arrowsAmount))
+		sb.WriteString("\n")
+
+		sb.WriteString(strings.Repeat(style.SpaceChar, spacesAmount))
+		sb.WriteString(style.CaptionColor)
+		sb.WriteString(diagnostic.Label)
+		sb.WriteString(ResetColor)
+		sb.WriteString("\n")
+	}
+
+	sb.WriteString("\n")
+	return sb
 }
 
 /*
  * Reports an error
  */
 func Report(error *Error, style *Style) string {
-	var builder strings.Builder
+	var sb strings.Builder
 
-	fmt.Fprintf(&builder, "%s%s%s %s\n", style.ErrorPrefixColor, style.ErrorPrefix, style.TitleColor, error.Title)
-	ReportDiagnostics(&builder, error, style)
+	sb.WriteString(style.ErrorPrefixColor)
+	sb.WriteString(style.ErrorPrefix)
+	sb.WriteString(style.TitleColor)
+	sb.WriteString(" ")
+	sb.WriteString(error.Title)
+	sb.WriteString("\n")
 
-	return builder.String()
+	return ReportDiagnostics(&sb, error, style).String()
 }

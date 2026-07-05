@@ -17,5 +17,5 @@ func main() {
 			c.NewLocation(1, 5, 10),
 			"Invalid function name.",
 		))
-	fmt.Printf("%s", error.ToString(c.DefaultStyle()))
+	fmt.Printf("%s", error.Error(c.DefaultStyle()))
 }

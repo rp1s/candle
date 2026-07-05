@@ -15,7 +15,7 @@ func ReadSource(path string, location Location, style *Style) (string, string) {
 	// Openning source code file
 	file, err := os.Open(path)
 	if err != nil {
-		fmt.Println(NewError(fmt.Sprintf("Could not read source code file: %s", path)).ToString(style))
+		fmt.Println(NewError(fmt.Sprintf("Could not read source code file: %s", path)).Error(style))
 		os.Exit(1)
 	}
 	defer file.Close()
