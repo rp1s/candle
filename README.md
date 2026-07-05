@@ -42,7 +42,7 @@ func main() {
 	fmt.Printf("%s", error.Error(c.DefaultStyle()))
 }
 ```
-<img alt="image" src="assets/simple.png" />
+<img src="assets/simple.png" style="width: 50%; height: auto;" />
 
 # Customizing style
 You can easily make your own style for errors, using Style struct:
