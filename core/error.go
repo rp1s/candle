@@ -19,7 +19,7 @@ func NewError(title string) *Error {
 
 // With diagnostics
 func (self *Error) WithDiagnostics(diagnostics []Diagnostic) *Error {
-	self.Diagnostics = diagnostics
+	self.Diagnostics = append(self.Diagnostics, diagnostics...)
 	return self
 }
 
